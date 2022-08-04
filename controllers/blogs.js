@@ -1,17 +1,20 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
+const logger = require('../utils/logger');
 
-blogsRouter.get('/', (req, res) => {
-  res.send('<h1>Hi!</h1>');
-});
+// blogsRouter.get('/', (req, res) => {
+//   res.send('<h1>Hi!</h1>');
+// });
 
-blogsRouter.get('/api/blogs', (request, response) => {
+blogsRouter.get('/', (request, response) => {
+  logger.info('Get request...')
   Blog.find({}).then((blogs) => {
+    logger.info('Blogs: ', blogs)
     response.json(blogs);
   });
 });
 
-blogsRouter.post('/api/blogs', (request, response) => {
+blogsRouter.post('/', (request, response) => {
   const { body } = request;
   const blog = new Blog({
     title: body.title,
