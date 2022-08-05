@@ -90,3 +90,15 @@ describe('top liked post', () => {
     expect(result).toEqual(expectedResult)
   });
 });
+
+
+describe('top author', () => { 
+  test('when author has 3 blogs', () => { 
+    const result = listHelper.mostBlogs(blogs);
+    const expectedResult = {
+      author: "Robert C. Martin",
+      blogs: 3
+    }
+    expect(result).toEqual(expectedResult)
+   })
+ })

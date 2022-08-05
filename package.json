@@ -14,6 +14,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "heroku": "^7.60.2",
+    "lodash": "^4.17.21",
     "mongoose": "^6.5.1"
   },
   "name": "bloglist",
@@ -21,13 +22,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "deploy": "git push heroku main",
     "logs:prod": "heroku logs --tail",
-    "lint": "eslint .",
-    "test": "jest --verbose"
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
