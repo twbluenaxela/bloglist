@@ -21,10 +21,10 @@ const favoriteBlog = (blogList) => {
 };
 
 const mostBlogs = (blogs) => {
-  const authorWithMostBlogs = maxBy(blogs, 'author')
-  const topAuthor = authorWithMostBlogs.author
-  const rankAuthors = countBy(blogs, 'author')
-  const totalBlogs = rankAuthors[topAuthor]
+  const authorWithMostBlogs = maxBy(blogs, 'author');
+  const topAuthor = authorWithMostBlogs.author;
+  const rankAuthors = countBy(blogs, 'author');
+  const totalBlogs = rankAuthors[topAuthor];
   // console.log('Top author: ', topAuthor);
   // console.log('Authors by rank: ', rankAuthors);
   // console.log('Total blogs: ', totalBlogs);
@@ -32,9 +32,25 @@ const mostBlogs = (blogs) => {
   const mostBlogObject = {
     author: topAuthor,
     blogs: totalBlogs,
-  }
+  };
 
   return mostBlogObject;
+};
+
+const mostLikes = (blogs) => {
+  const listOfAuthors = [...new Set(blogs.map((blog) => blog.author))];
+  console.log('List of authors...', listOfAuthors);
+  const topAuthor = listOfAuthors.map((author) => {
+    const authorArray = blogs.filter((blog) => blog.author === author);
+    console.log('Author array ', authorArray);
+    const numOfLikes = authorArray.reduce((sum, a) => sum + a.likes, 0);
+    console.log('Num of likes: ', numOfLikes);
+    const authorObj = { author, likes: numOfLikes };
+    console.log('Author obj', authorObj);
+    return authorObj;
+  });
+
+  return maxBy(topAuthor, 'likes');
 };
 
 module.exports = {
@@ -42,4 +58,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
