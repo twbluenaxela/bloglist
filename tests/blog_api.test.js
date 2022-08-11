@@ -82,6 +82,13 @@ test('if missing blog title or url will send a 400 bad request', async () => {
         likes: 9001,
       };
 
+    const correctlyFormattedBlog = {
+        title: "Hi",
+        author: "Gladwell",
+        url: "https://supaman.com",
+        likes: 9001,
+      };
+
     await api
     .post('/api/blogs')
     .send(newBlog)
