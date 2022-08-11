@@ -96,6 +96,49 @@ test('if missing blog title or url will send a 400 bad request', async () => {
 
 })
 
+describe('deletion of blogs', () => {
+  test('returns 204 if deleted', async () => {
+
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    
+    const authors = blogsAtEnd.map(b => b.author)
+
+    expect(authors).not.toContain(blogToDelete.author)
+
+  })
+})
+
+describe('update blog', () => {
+  test('update title of blog entry by id', async () => {
+    const blogs = await helper.blogsInDb()
+    console.log('Blogs: ', blogs)
+    const blogId = blogs[0].id
+    console.log('Old title: ', blogs[0].title)
+    const newBlog = {...blogs[0], title:'I am superman!'}
+    await api
+    .put(`/api/blogs/${blogId}`)
+    .send(newBlog)
+    .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    
+    const titles = blogsAtEnd.map(b => b.title)
+
+    console.log('New title: ', blogsAtEnd[0].title)
+
+    expect(titles).toContain(newBlog.title)
+
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close();
 });
