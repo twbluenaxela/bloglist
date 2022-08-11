@@ -117,12 +117,12 @@ describe('deletion of blogs', () => {
 })
 
 describe('update blog', () => {
-  test('update title of blog entry by id', async () => {
+  test('update likes of blog entry by id', async () => {
     const blogs = await helper.blogsInDb()
     console.log('Blogs: ', blogs)
     const blogId = blogs[0].id
-    console.log('Old title: ', blogs[0].title)
-    const newBlog = {...blogs[0], title:'I am superman!'}
+    console.log('Old likes: ', blogs[0].likes)
+    const newBlog = {...blogs[0], likes: 8}
     await api
     .put(`/api/blogs/${blogId}`)
     .send(newBlog)
@@ -130,11 +130,11 @@ describe('update blog', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
     
-    const titles = blogsAtEnd.map(b => b.title)
+    const likeCount = blogsAtEnd.map(b => b.likes)
 
-    console.log('New title: ', blogsAtEnd[0].title)
+    console.log('New likes: ', blogsAtEnd[0].likes)
 
-    expect(titles).toContain(newBlog.title)
+    expect(likeCount).toContain(newBlog.likes)
 
   })
 })
