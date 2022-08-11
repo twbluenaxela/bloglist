@@ -46,6 +46,31 @@ test('that the blog id is formatted correctly', async () => {
 
 })
 
+test('if a blog post has been successfully added', async() => {
+
+    const newBlog = {
+        title: 'Hi',
+        author: 'Gladwell',
+        url: "https://supaman.com",
+        likes: 9001,
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+    const authors = blogsAtEnd.map(b => b.author)
+    expect(authors).toContain(
+        'Gladwell'
+    )
+
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
