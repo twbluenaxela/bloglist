@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlN1cGVydXNlciIsImlkIjoiNjJmNmY3ZWFkMWQ4ZTY4OGFlZjdmNGVjIiwiaWF0IjoxNjYwMzU2MzU3fQ.ZFItppaHEgQzfVW3vhcdR9d-If0U7_MFUc7kF44y_Sw
 
 {
-    "title": "I am unique",
-    "author": "Ade's momma",
+    "title": "I am not unique",
+    "author": "a person deep within the sands",
     "url": "https://fullstackopen.com/en/part4/structure_of_backend_application_introduction_to_testing#exercises-4-1-4-2",
-    "likes": 90034,
-    "userId": "62f6f7ead1d8e688aef7f4ec"
+    "likes": 90034
 }
