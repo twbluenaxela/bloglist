@@ -8,7 +8,7 @@ const api = supertest(app);
 
 const Blog = require('../models/blog');
 
-const token = process.env.TEST_TOKEN;
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlN1cGVydXNlciIsImlkIjoiNjJmNmY3ZWFkMWQ4ZTY4OGFlZjdmNGVjIiwiaWF0IjoxNjYwMzY0ODc1fQ.W2r55r3FYpFGur6ADxpnlTpf3h67lDu70iFF943tYN4'
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -57,8 +57,8 @@ test('if a blog post has been successfully added', async () => {
 
   await api
     .post('/api/blogs')
-    .set('Authorization', 'bearer ', token)
     .send(newBlog)
+    .set('Authorization', `bearer ${token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/);
 

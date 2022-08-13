@@ -3,17 +3,18 @@ const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const logger = require('../utils/logger');
+const middleware = require('../utils/middleware')
 
 // blogsRouter.get('/', (req, res) => {
 //   res.send('<h1>Hi!</h1>');
 // });
 
 blogsRouter.get('/', async (request, response) => {
-  logger.info(`I am alive`)
+  logger.info('I am alive');
   const blogs = await Blog
     .find({})
     .populate('user');
-    console.log(blogs)
+  console.log(blogs);
   response.json(blogs);
 });
 
@@ -26,23 +27,27 @@ blogsRouter.get('/:id', async (request, response, next) => {
   }
 });
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   const { body } = request;
   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
   // if (!decodedToken.id) {
   //   return response.status(401).json({ error: 'token missing or invalid' });
   // }
 
-  const { token } = request
+  const { token } = request;
   if (!token) {
-    return response.status(401).json({ error: 'invalid token' })
+    return response.status(401).json({ error: 'invalid token' });
   }
 
-  console.log('Token', token)
+  console.log('Token', token);
 
   const { user } = request;
-  console.log('User', user)
-  logger.info(`User: ${user}`)
+  console.log('User', user);
+  logger.info(`User: ${user}`);
+  if (!user) {
+    return response.status(400).json({ error: 'couldn\'t find user' });
+  }
+  
 
   const blog = new Blog({
     title: body.title,
@@ -67,8 +72,7 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response, next) => {
-
-  const { user } = request
+  const { user } = request;
   const blog = await Blog.findById(request.params.id);
 
   // const blogsOfUser = user.blogs.map(b => b.toString())
