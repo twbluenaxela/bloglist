@@ -9,9 +9,11 @@ const logger = require('../utils/logger');
 // });
 
 blogsRouter.get('/', async (request, response) => {
+  logger.info(`I am alive`)
   const blogs = await Blog
     .find({})
     .populate('user');
+    console.log(blogs)
   response.json(blogs);
 });
 
@@ -31,7 +33,15 @@ blogsRouter.post('/', async (request, response) => {
   //   return response.status(401).json({ error: 'token missing or invalid' });
   // }
 
+  const { token } = request
+  if (!token) {
+    return response.status(401).json({ error: 'invalid token' })
+  }
+
+  console.log('Token', token)
+
   const { user } = request;
+  console.log('User', user)
   logger.info(`User: ${user}`)
 
   const blog = new Blog({
@@ -57,12 +67,8 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
 
-  const user = await User.findById(decodedToken.id);
+  const { user } = request
   const blog = await Blog.findById(request.params.id);
 
   // const blogsOfUser = user.blogs.map(b => b.toString())
