@@ -1,2 +1,2 @@
-POST http://localhost:3001/api/blogs/62f702849debdc2b77802d34
+DELETE http://localhost:3001/api/blogs/62f703dd8a40f8019843c8e2
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlN1cGVydXNlciIsImlkIjoiNjJmNmY3ZWFkMWQ4ZTY4OGFlZjdmNGVjIiwiaWF0IjoxNjYwMzU2MzU3fQ.ZFItppaHEgQzfVW3vhcdR9d-If0U7_MFUc7kF44y_Sw
