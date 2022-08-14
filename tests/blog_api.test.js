@@ -8,15 +8,11 @@ const api = supertest(app);
 
 const Blog = require('../models/blog');
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlN1cGVydXNlciIsImlkIjoiNjJmNmY3ZWFkMWQ4ZTY4OGFlZjdmNGVjIiwiaWF0IjoxNjYwMzY0ODc1fQ.W2r55r3FYpFGur6ADxpnlTpf3h67lDu70iFF943tYN4'
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYyZjg0MjJmOWMxYmM3ZmQ0Y2FlNjBiOSIsImlhdCI6MTY2MDQzNzA1MCwiZXhwIjoxNjYwNDQwNjUwfQ.ba6C992sDmSWQAwAf30YO9cUuFNOiEWilDaQ3tLurEk'
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-
-  for (const blog of helper.initialBlogs) {
-    const blogObject = new Blog(blog);
-    await blogObject.save();
-  }
+  await Blog.insertMany(helper.initialBlogs)
 });
 
 test('blogs are returned as json', async () => {
@@ -94,8 +90,8 @@ test('if missing blog title or url will send a 400 bad request', async () => {
 
   await api
     .post('/api/blogs')
-    .set('Authorization', token)
     .send(newBlog)
+    .set('Authorization', `bearer ${token}`)
     .expect(400);
 });
 
@@ -104,9 +100,13 @@ describe('deletion of blogs', () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
+    console.log('Blogs at start:  ', blogsAtStart)
+    console.log('Blog to delete: ', blogToDelete)
+
+
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
-      .set('Authorization', token)
+      .set('Authorization', `bearer ${token}`)
       .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
@@ -117,6 +117,16 @@ describe('deletion of blogs', () => {
 
     expect(authors).not.toContain(blogToDelete.author);
   });
+
+  test('returns 401 if not correct token', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[blogsAtStart.length - 1];
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${token}`)
+      .expect(401);
+  })
 });
 
 describe('update blog', () => {

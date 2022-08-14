@@ -71,7 +71,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   // });
 });
 
-blogsRouter.delete('/:id', async (request, response, next) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
   const { user } = request;
   const blog = await Blog.findById(request.params.id);
 
@@ -80,6 +80,8 @@ blogsRouter.delete('/:id', async (request, response, next) => {
   // logger.info(`User: ${user}`)
   // logger.info(`Blog: ${blog}`)
   // logger.info(`Blogs of user: ${blogsOfUser}`)
+
+  // console.log('Blog:  ', blog)
 
   if (blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndRemove(request.params.id);
