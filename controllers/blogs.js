@@ -1,8 +1,7 @@
-
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const logger = require('../utils/logger');
-const middleware = require('../utils/middleware')
+const middleware = require('../utils/middleware');
 
 // blogsRouter.get('/', (req, res) => {
 //   res.send('<h1>Hi!</h1>');
@@ -46,7 +45,6 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   if (!user) {
     return response.status(400).json({ error: 'couldn\'t find user' });
   }
-  
 
   const blog = new Blog({
     title: body.title,
