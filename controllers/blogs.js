@@ -93,10 +93,9 @@ blogsRouter.post(
 
 blogsRouter.get(
   "/:id/comments",
-  middleware.userExtractor,
   async (request, response) => {
     const comments = await Comment.find({}).populate("blog");
-    console.log(comments);
+    console.log('Sending comments ', comments);
     response.json(comments);
   }
 );
