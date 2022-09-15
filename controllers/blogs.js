@@ -1,22 +1,21 @@
-const blogsRouter = require('express').Router();
-const Blog = require('../models/blog');
-const logger = require('../utils/logger');
-const middleware = require('../utils/middleware');
+const blogsRouter = require("express").Router();
+const Blog = require("../models/blog");
+const Comment = require("../models/comment");
+const logger = require("../utils/logger");
+const middleware = require("../utils/middleware");
 
 // blogsRouter.get('/', (req, res) => {
 //   res.send('<h1>Hi!</h1>');
 // });
 
-blogsRouter.get('/', async (request, response) => {
-  logger.info('I am alive');
-  const blogs = await Blog
-    .find({})
-    .populate('user');
+blogsRouter.get("/", async (request, response) => {
+  logger.info("I am alive");
+  const blogs = await Blog.find({}).populate("user");
   console.log(blogs);
   response.json(blogs);
 });
 
-blogsRouter.get('/:id', async (request, response, next) => {
+blogsRouter.get("/:id", async (request, response, next) => {
   const blog = await Blog.findById(request.params.id);
   if (blog) {
     response.json(blog);
@@ -25,7 +24,7 @@ blogsRouter.get('/:id', async (request, response, next) => {
   }
 });
 
-blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
+blogsRouter.post("/", middleware.userExtractor, async (request, response) => {
   const { body } = request;
   // const decodedToken = jwt.verify(request.token, process.env.SECRET);
   // if (!decodedToken.id) {
@@ -34,16 +33,16 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 
   const { token } = request;
   if (!token) {
-    return response.status(401).json({ error: 'invalid token' });
+    return response.status(401).json({ error: "invalid token" });
   }
 
-  console.log('Token', token);
+  console.log("Token", token);
 
   const { user } = request;
-  console.log('User', user);
+  console.log("User", user);
   logger.info(`User: ${user}`);
   if (!user) {
-    return response.status(400).json({ error: 'couldn\'t find user' });
+    return response.status(400).json({ error: "couldn't find user" });
   }
 
   const blog = new Blog({
@@ -68,37 +67,78 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   // });
 });
 
-blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
-  const { user } = request;
-  const blog = await Blog.findById(request.params.id);
+blogsRouter.post(
+  "/:id/comments",
+  async (request, response) => {
+    const { body } = request;
+    console.log('Request: ', request.body)
 
-  // const blogsOfUser = user.blogs.map(b => b.toString())
+    // if (!token) {
+    //   return response.status(401).json({ error: "invalid token" });
+    // }
 
-  // logger.info(`User: ${user}`)
-  // logger.info(`Blog: ${blog}`)
-  // logger.info(`Blogs of user: ${blogsOfUser}`)
+    // console.log("Token", token);
+    console.log('Content: ', body.content)
+    // logger(`Content ${body.content}`)
 
-  // console.log('Blog:  ', blog)
+    const comment = new Comment({
+      content: body.content,
+      blog: request.params.id,
+    });
 
-  if (blog.user.toString() === user._id.toString()) {
-    await Blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
-  } else if (blog.user.toString !== user._id.toString()) {
-    return response.status(401).json({ error: 'Not authorized to delete this post.' });
+    const savedComment = await comment.save();
+    response.status(201).json(savedComment);
   }
-});
+);
 
-blogsRouter.put('/:id', async (request, response, next) => {
-  const {
-    title, author, url, likes,
-  } = request.body;
+blogsRouter.get(
+  "/:id/comments",
+  middleware.userExtractor,
+  async (request, response) => {
+    const comments = await Comment.find({}).populate("blog");
+    console.log(comments);
+    response.json(comments);
+  }
+);
+
+blogsRouter.delete(
+  "/:id",
+  middleware.userExtractor,
+  async (request, response, next) => {
+    const { user } = request;
+    const blog = await Blog.findById(request.params.id);
+
+    // const blogsOfUser = user.blogs.map(b => b.toString())
+
+    // logger.info(`User: ${user}`)
+    // logger.info(`Blog: ${blog}`)
+    // logger.info(`Blogs of user: ${blogsOfUser}`)
+
+    // console.log('Blog:  ', blog)
+
+    if (blog.user.toString() === user._id.toString()) {
+      await Blog.findByIdAndRemove(request.params.id);
+      response.status(204).end();
+    } else if (blog.user.toString !== user._id.toString()) {
+      return response
+        .status(401)
+        .json({ error: "Not authorized to delete this post." });
+    }
+  }
+);
+
+blogsRouter.put("/:id", async (request, response, next) => {
+  const { title, author, url, likes } = request.body;
 
   const updatedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
     {
-      title, author, url, likes,
+      title,
+      author,
+      url,
+      likes,
     },
-    { new: true, runValidators: true, context: 'query' },
+    { new: true, runValidators: true, context: "query" }
   );
 
   response.json(updatedBlog);
